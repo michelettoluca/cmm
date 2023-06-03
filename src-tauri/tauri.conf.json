@@ -12,12 +12,90 @@
 	},
 	"tauri": {
 		"allowlist": {
-			"all": false
+			"all": true,
+			"shell": {
+				"all": true,
+				"execute": true,
+				"open": true,
+				"sidecar": true,
+				"scope": [
+					{
+						"name": "mvnw",
+						"cmd": "mvnw",
+						"args": ["spring-boot:run"]
+					}
+				]
+			},
+			"fs": {
+				"all": true,
+				"readFile": true,
+				"writeFile": true,
+				"readDir": true,
+				"copyFile": true,
+				"createDir": true,
+				"removeDir": true,
+				"removeFile": true,
+				"renameFile": true,
+				"scope": ["$AUDIO", "$CACHE", "$CONFIG", "$DATA", "$LOCALDATA", "$DESKTOP/*", "$DOCUMENT", "$DOWNLOAD", "$EXE", "$FONT", "$HOME", "$PICTURE", "$PUBLIC", "$RUNTIME", "$TEMPLATE", "$VIDEO", "$RESOURCE", "$APP/*", "$LOG/*", "$TEMP"]
+			},
+			"path": {
+				"all": true
+			},
+			"os": {
+				"all": true
+			},
+			"app": {
+				"all": true,
+				"hide": true,
+				"show": true
+			},
+			"process": {
+				"all": true,
+				"exit": true,
+				"relaunch": true,
+				"relaunchDangerousAllowSymlinkMacos": true
+			},
+			"window": {
+				"all": true,
+				"center": true,
+				"close": true,
+				"create": true,
+				"hide": true,
+				"maximize": true,
+				"minimize": true,
+				"print": true,
+				"requestUserAttention": true,
+				"setAlwaysOnTop": true,
+				"setContentProtected": true,
+				"setCursorGrab": true,
+				"setCursorIcon": true,
+				"setCursorPosition": true,
+				"setCursorVisible": true,
+				"setDecorations": true,
+				"setFocus": true,
+				"setFullscreen": true,
+				"setIcon": true,
+				"setIgnoreCursorEvents": true,
+				"setMaxSize": true,
+				"setMinSize": true,
+				"setPosition": true,
+				"setResizable": true,
+				"setSize": true,
+				"setSkipTaskbar": true,
+				"setTitle": true,
+				"show": true,
+				"startDragging": true,
+				"unmaximize": true,
+				"unminimize": true
+			}
 		},
 		"bundle": {
 			"active": true,
 			"category": "DeveloperTool",
 			"copyright": "",
+			"appimage": {
+				"bundleMediaFramework": true
+			},
 			"deb": {
 				"depends": []
 			},
@@ -53,7 +131,7 @@
 				"height": 600,
 				"resizable": false,
 				"title": "Cloe Microservices Manager",
-				"width": 800
+				"width": 1024
 			}
 		]
 	}
