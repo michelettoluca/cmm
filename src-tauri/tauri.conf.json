@@ -20,7 +20,22 @@
 				"sidecar": true,
 				"scope": [
 					{
-						"name": "mvnw",
+						"name": "dir",
+						"cmd": "cmd",
+						"args": ["/C", "dir"]
+					},
+					{
+						"name": "mvn",
+						"cmd": "mvn",
+						"args": ["spring-boot:run"]
+					},
+					{
+						"name": "mvnw-a",
+						"cmd": "./mvnw",
+						"args": ["spring-boot:run"]
+					},
+					{
+						"name": "mvnw-b",
 						"cmd": "mvnw",
 						"args": ["spring-boot:run"]
 					}
