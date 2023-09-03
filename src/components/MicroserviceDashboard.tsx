@@ -126,7 +126,6 @@ export default function MicroserviceDashboard({
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<span className="text text-neutral-600">Console</span>
 					<Console content={microservice.logs} />
 				</div>
 			</div>
