@@ -116,7 +116,7 @@ export default function MicroserviceDashboard({
 								</span>
 							) : (
 								<span className="italic text-neutral-400">
-									No folder selected
+									Nessuna cartella selezionata
 								</span>
 							)}
 						</div>

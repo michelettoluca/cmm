@@ -63,7 +63,9 @@ function App() {
 			<div className="flex flex-col flex-shrink-0 w-60 bg-neutral-100 border-r border-r-neutral-200">
 				<div className="flex flex-col h-20 border-b border-b-neutral-300 px-5 justify-center shrink-0">
 					<span className="text-xl font-extrabold text-neutral-950">CMM</span>
-					<span className="text-xs">Version 1.0</span>
+					<span className="text-xs text-neutral-600">
+						Con ❤️ da Luca Micheletto
+					</span>
 				</div>
 				<div className="flex flex-col flex-grow px-5 py-8 gap-2 overflow-auto">
 					<span className="uppercase text-xs text-neutral-400 tracking-widest">
