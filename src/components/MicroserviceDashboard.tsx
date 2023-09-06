@@ -1,81 +1,81 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import {dialog} from "@tauri-apps/api"
-import {Command} from "@tauri-apps/api/shell"
-import Console from "./Console"
-import clsx from "clsx"
-import {Play, Square, Trash} from "lucide-react"
-import {useLogs, useMicroservices} from "../utils/hooks"
-import {Microservice} from "../utils/types"
-import Modal, {useModal} from "./Modal"
-import {useEffect, useState} from "react";
+import { dialog } from "@tauri-apps/api";
+import { Command } from "@tauri-apps/api/shell";
+import Console from "./Console";
+import clsx from "clsx";
+import { Play, Square, Trash } from "lucide-react";
+import { useLogs, useMicroservices, useModal } from "../utils/hooks";
+import { Microservice } from "../utils/types";
+import Modal from "./Modal";
+import { useEffect, useState } from "react";
 
 type MicroserviceDashboardProps = {
-  microservice: Microservice
-  onDelete: () => void
-}
+  microservice: Microservice;
+  onDelete: () => void;
+};
 
 export default function MicroserviceDashboard({
   microservice,
   onDelete,
 }: MicroserviceDashboardProps) {
-  const mssStore = useMicroservices()
-  const logsStore = useLogs()
-  
-  const {isOpen, open, dismiss} = useModal()
-  
-  const [logs, setLogs] = useState<string>("")
-  
-  function updateConsole() {
-      setLogs(logsStore.logs[microservice.id])
-  }
-  
+  const mssStore = useMicroservices();
+  const logsStore = useLogs();
+
+  const { isOpen, open, dismiss } = useModal();
+  const [logs, setLogs] = useState<string>("");
+
   useEffect(() => {
-    setLogs(logsStore.logs[microservice.id])
-    microservice.command?.stdout?.on?.("data", updateConsole)
-    
+    setLogs(logsStore.logs[microservice.id]);
+    const updateConsole = () => {
+      setLogs(logsStore.logs[microservice.id]);
+    };
+
+    microservice.command?.stdout?.on?.("data", updateConsole);
+
     return () => {
-      microservice.command?.stdout?.removeListener?.("data", updateConsole)
-    }
-  }, [microservice])
-  
+      microservice.command?.stdout?.removeListener?.("data", updateConsole);
+    };
+  }, [logsStore.logs, microservice]);
+
   async function browse() {
     const directory = (await dialog.open({
       directory: true,
       multiple: false,
-    })) as string | null
-  
-    mssStore.actions.update(microservice.id, {directory})
+    })) as string | null;
+
+    mssStore.update(microservice.id, { directory });
   }
-  
+
   function startProcess() {
-    const command = new Command("mvnw", [], {cwd: microservice.directory!})
-    
+    const command = new Command("mvnw", [], { cwd: microservice.directory! });
+
     command.spawn().then((spawn) => {
-      mssStore.actions.update(microservice.id, {spawn, command})
-    })
-    
+      mssStore.update(microservice.id, { spawn, command });
+    });
+
     command.stdout.on("data", (data) => {
-      logsStore.actions.add(microservice.id, data);
-    })
-    
+      logsStore.add(microservice.id, data);
+    });
+
     command.on("close", () => {
       command.stdout.removeAllListeners();
-      microservice.spawn?.kill()
-    })
+      microservice.spawn?.kill();
+    });
   }
-  
+
   function killProcess() {
     microservice.spawn?.kill().then(() => {
-      microservice.command?.stdout?.removeListener("data", updateConsole)
-      
-      mssStore.actions.update(microservice.id, {spawn: null})
-      logsStore.actions.clear(microservice.id)
-    })
+      microservice.command?.stdout?.removeListener("data", () => {
+        setLogs(logsStore.logs[microservice.id]);
+      });
+
+      mssStore.update(microservice.id, { spawn: null });
+      logsStore.clear(microservice.id);
+    });
   }
-  
-  const isRunning = !!microservice.spawn
-  
+
+  const isRunning = !!microservice.spawn;
+
   return (
     <>
       {isOpen && (
@@ -89,10 +89,11 @@ export default function MicroserviceDashboard({
             <button
               className="px-4 py-2 bg-red-500 rounded text-gray-50 font-semibold"
               onClick={() => {
-                onDelete()
-                mssStore.actions.remove(microservice.id)
-                dismiss()
-              }}>
+                onDelete();
+                mssStore.remove(microservice.id);
+                dismiss();
+              }}
+            >
               Elimina
             </button>
           </div>
@@ -100,11 +101,11 @@ export default function MicroserviceDashboard({
       )}
       <div className="flex justify-between flex-shrink-0 h-20 border-b border-b-neutral-300 px-8 items-center">
         <div className="flex items-center gap-3">
-					<span className="text-2xl font-extrabold text-neutral-800">
-						{microservice.name}
-					</span>
+          <span className="text-2xl font-extrabold text-neutral-800">
+            {microservice.name}
+          </span>
           <button className="text-white bg-red-500 p-2 rounded" onClick={open}>
-            <Trash size={16}/>
+            <Trash size={16} />
           </button>
         </div>
         <div>
@@ -114,10 +115,11 @@ export default function MicroserviceDashboard({
               isRunning ? "bg-red-500" : "bg-green-500",
               !microservice.directory && !isRunning
                 ? "pointer-events-none saturate-0"
-                : ""
+                : "",
             )}
-            onClick={isRunning ? killProcess : startProcess}>
-            {isRunning ? <Square size={20}/> : <Play size={20}/>}
+            onClick={isRunning ? killProcess : startProcess}
+          >
+            {isRunning ? <Square size={20} /> : <Play size={20} />}
           </button>
         </div>
       </div>
@@ -128,12 +130,12 @@ export default function MicroserviceDashboard({
             <div className="flex-grow p-4 bg-neutral-100">
               {microservice.directory ? (
                 <span className="text-neutral-800">
-									{microservice.directory}
-								</span>
+                  {microservice.directory}
+                </span>
               ) : (
                 <span className="italic text-neutral-400">
-									Nessuna cartella selezionata
-								</span>
+                  Nessuna cartella selezionata
+                </span>
               )}
             </div>
             <button className="p-4 bg-neutral-800 text-white" onClick={browse}>
@@ -142,9 +144,9 @@ export default function MicroserviceDashboard({
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <Console content={logs}/>
+          <Console content={logs} />
         </div>
       </div>
     </>
-  )
+  );
 }

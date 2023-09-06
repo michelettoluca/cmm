@@ -1,4 +1,4 @@
-import {Microservice} from "./types"
+import { Microservice } from "./types";
 
 export function createMicroservice(name: string): Microservice {
   return {
@@ -7,5 +7,5 @@ export function createMicroservice(name: string): Microservice {
     directory: null,
     command: null,
     spawn: null,
-  }
+  };
 }

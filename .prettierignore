@@ -1,0 +1,8 @@
+# Ignore artifacts:
+src-tauri
+public
+
+**/.git
+**/.svn
+**/.hg
+**/node_modules
