@@ -1,10 +1,11 @@
-import { Microservice } from "./types"
+import {Microservice} from "./types"
 
 export function createMicroservice(name: string): Microservice {
-	return {
-		name,
-		directory: null,
-		logs: "",
-		spawn: null,
-	}
+  return {
+    id: Math.ceil(Math.random() * 10000),
+    name,
+    directory: null,
+    command: null,
+    spawn: null,
+  }
 }

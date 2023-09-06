@@ -1,79 +1,83 @@
-import { useState, useEffect, createContext } from "react"
-import { createMicroservice } from "../utils/createMicroservice"
-import { Microservice } from "../utils/types"
+import {useState, useEffect, createContext} from "react"
+import {createMicroservice} from "../utils/createMicroservice"
+import {Microservice} from "../utils/types"
 
 type MicroserviceProviderProps = React.PropsWithChildren
 
 type MicroservicesContext = {
-	microservices: Microservice[]
-	actions: {
-		setMicroservices: (microservices: Microservice[]) => void
-		addMicroservice: (name: string) => boolean
-		removeMicroservice: (name: Microservice) => boolean
-		updateMicroservice: (microservice: Microservice) => void
-	}
+  microservices: Microservice[]
+  actions: {
+    add: (name: string) => Microservice
+    remove: (id: Microservice["id"]) => void
+    update: (id: Microservice["id"], data: Partial<Microservice>) => void,
+  }
 }
 
 export const MicroservicesContext = createContext<MicroservicesContext>(
-	{} as MicroservicesContext
+  {} as MicroservicesContext
 )
 
-export function MicroserviceProvider({ children }: MicroserviceProviderProps) {
-	const [microservices, setMicroservices] = useState<Microservice[]>([])
-
-	function addMicroservice(name: string): boolean {
-		const microservice = createMicroservice(name)
-
-		const updatedMicroservices = [...microservices, microservice]
-
-		setMicroservices(updatedMicroservices)
-		localStorage.setItem("microservices", JSON.stringify(updatedMicroservices))
-
-		return true
-	}
-
-	function removeMicroservice(microservice: Microservice): boolean {
-		const updatedMicroservices = microservices.filter(
-			(ms) => ms !== microservice
-		)
-
-		setMicroservices(updatedMicroservices)
-		localStorage.setItem("microservices", JSON.stringify(updatedMicroservices))
-
-		return true
-	}
-
-	function updateMicroservice(microservice: Microservice) {
-		const updatedMicroservices = microservices.map((ms) =>
-			ms === microservice ? microservice : ms
-		)
-
-		setMicroservices(updatedMicroservices)
-		localStorage.setItem("microservices", JSON.stringify(updatedMicroservices))
-	}
-
-	useEffect(() => {
-		const mss = localStorage.getItem("microservices")
-
-		if (!mss) {
-			localStorage.setItem("microservices", JSON.stringify([]))
-		} else {
-			setMicroservices(JSON.parse(mss))
-		}
-	}, [])
-
-	return (
-		<MicroservicesContext.Provider
-			value={{
-				microservices,
-				actions: {
-					setMicroservices,
-					addMicroservice,
-					removeMicroservice,
-					updateMicroservice,
-				},
-			}}>
-			{children}
-		</MicroservicesContext.Provider>
-	)
+export function MicroserviceProvider({children}: MicroserviceProviderProps) {
+  const [microservices, setMicroservices] = useState<Microservice[]>([])
+  
+  function add(name: string): Microservice {
+    const microservice = createMicroservice(name)
+    
+    save([...microservices, microservice])
+    
+    return microservice;
+  }
+  
+  function remove(id: Microservice["id"]) {
+    const _microservices = microservices.filter(
+      (ms) => ms.id !== id
+    )
+    
+    save(_microservices)
+  }
+  
+  function update(id: Microservice["id"], data: Partial<Microservice>) {
+    console.log({
+      microservices,
+      data
+    })
+    
+    const _microservices = microservices.map((microservice) =>
+      microservice.id === id ? {...microservice, ...data} : microservice
+    )
+    
+    save(_microservices)
+  }
+  
+  
+  function save(_microservices: Microservice[]) {
+    console.log({shouldRerender: _microservices !== microservices})
+    
+    setMicroservices(_microservices)
+    localStorage.setItem("microservices", JSON.stringify(_microservices))
+  }
+  
+  useEffect(() => {
+    const _microservices = localStorage.getItem("microservices")
+    
+    if (_microservices) {
+      setMicroservices(JSON.parse(_microservices))
+    } else {
+      localStorage.setItem("microservices", JSON.stringify([]))
+    }
+  }, [])
+  
+  return (
+    <MicroservicesContext.Provider
+      value={{
+        microservices,
+        actions: {
+          add,
+          remove,
+          update
+        },
+      }}>
+      {children}
+    </MicroservicesContext.Provider>
+  )
 }
