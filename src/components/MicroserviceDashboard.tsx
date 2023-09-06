@@ -58,17 +58,13 @@ export default function MicroserviceDashboard({
     });
 
     command.on("close", () => {
-      command.stdout.removeAllListeners();
-      microservice.spawn?.kill();
+      killProcess();
     });
   }
 
   function killProcess() {
     microservice.spawn?.kill().then(() => {
-      microservice.command?.stdout?.removeListener("data", () => {
-        setLogs(logsStore.logs[microservice.id]);
-      });
-
+      microservice.command?.stdout?.removeAllListeners("data");
       mssStore.update(microservice.id, { spawn: null });
       logsStore.clear(microservice.id);
     });
