@@ -11,15 +11,10 @@ import {MicroserviceListItem} from "./components/MicroserviceListItem"
 import {LogsProvider} from "./components/LogsProvider";
 
 function App() {
-  const {
-    microservices,
-    actions: {add},
-  } = useMicroservices()
+  const mssStore = useMicroservices()
   
   const [name, setName] = useState<string>("")
-  
-  const [selectedIdx, setSelectedIdx] =
-    useState<Microservice["id"] | null>(null)
+  const [selectedId, setSelectedId] = useState<Microservice["id"] | null>(null)
   
   const {isOpen, open, dismiss} = useModal()
   
@@ -27,6 +22,8 @@ function App() {
     setName("")
     dismiss()
   }
+  
+  const microservice = mssStore.microservices.find(ms => ms.id ===selectedId);
   
   return (
     <div className="flex h-screen w-screen font-['Inter'] antialiased text-sm">
@@ -52,7 +49,8 @@ function App() {
                 !name && "bg-neutral-300 pointer-events-none"
               )}
               onClick={() => {
-                add(name)
+                const newMicroservice = mssStore.actions.add(name);
+                setSelectedId(newMicroservice.id)
                 closeModal()
               }}>
               Aggiungi
@@ -72,12 +70,12 @@ function App() {
 					<span className="uppercase text-xs text-neutral-400 tracking-widest">
 						Mircroservices
 					</span>
-          {microservices.map((ms, idx) => (
+          {mssStore.microservices.map((ms) => (
             <MicroserviceListItem
               key={ms.id}
               microservice={ms}
-              isSelected={idx === selectedIdx}
-              onClick={() => setSelectedIdx(idx)}
+              isSelected={ms.id === selectedId}
+              onClick={() => setSelectedId(ms.id)}
             />
           ))}
           <button
@@ -88,10 +86,10 @@ function App() {
         </div>
       </div>
       <div className="flex flex-col flex-grow w-fit">
-        {selectedIdx !== null ? (
+        {microservice ? (
           <MicroserviceDashboard
-            microservice={microservices[selectedIdx]}
-            onDelete={() => setSelectedIdx(null)}
+            microservice={microservice}
+            onDelete={() => setSelectedId(null)}
           />
         ) : null}
       </div>
@@ -103,7 +101,6 @@ export default function Providers() {
   return (
     <LogsProvider>
       <MicroserviceProvider>
-        
         <App/>
       </MicroserviceProvider>
     </LogsProvider>

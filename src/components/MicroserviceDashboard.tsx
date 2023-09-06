@@ -32,10 +32,10 @@ export default function MicroserviceDashboard({
   
   useEffect(() => {
     setLogs(logsStore.logs[microservice.id])
-    microservice.command?.stdout?.on("data", updateConsole)
+    microservice.command?.stdout?.on?.("data", updateConsole)
     
     return () => {
-      microservice.command?.stdout?.removeListener("data", updateConsole)
+      microservice.command?.stdout?.removeListener?.("data", updateConsole)
     }
   }, [microservice])
   

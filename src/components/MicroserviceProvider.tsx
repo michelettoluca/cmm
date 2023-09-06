@@ -37,11 +37,6 @@ export function MicroserviceProvider({children}: MicroserviceProviderProps) {
   }
   
   function update(id: Microservice["id"], data: Partial<Microservice>) {
-    console.log({
-      microservices,
-      data
-    })
-    
     const _microservices = microservices.map((microservice) =>
       microservice.id === id ? {...microservice, ...data} : microservice
     )
@@ -51,8 +46,6 @@ export function MicroserviceProvider({children}: MicroserviceProviderProps) {
   
   
   function save(_microservices: Microservice[]) {
-    console.log({shouldRerender: _microservices !== microservices})
-    
     setMicroservices(_microservices)
     localStorage.setItem("microservices", JSON.stringify(_microservices))
   }
