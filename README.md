@@ -15,7 +15,7 @@ I built this app for my coworkers and me because the suggested way to setup the 
   ```
 - Build the application with
   ```
-  npm run build
+  npm run tauri build
   ```
 - Depending on the OS run the .deb or .msi generated
 
